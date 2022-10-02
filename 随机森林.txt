@@ -1,0 +1,42 @@
+#打乱顺序
+from sklearn.utils import shuffle
+z23=shuffle(z23)
+
+#选特征
+from sklearn.preprocessing import MinMaxScaler
+
+X=z23[['id_assessment','date_submitted','gender','region','highest_education','imd_band','age_band', 'studied_credits',
+       'disability', 'final_result']].to_numpy()
+Y=z23['score'].to_numpy()
+
+from sklearn.model_selection import train_test_split
+#切分测试集训练集
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
+#标准化
+scaler = MinMaxScaler()
+scaler.fit(X_train)
+X_train, X_test = scaler.transform(X_train), scaler.transform(X_test)
+
+#逻辑回归
+from sklearn.linear_model import LogisticRegression
+
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+y_pred = lr.predict(X_test)
+#准确率，精确率（对的行/预测的行，不考虑反例），召回率（对的行/实际的行，不考虑反例），f1为精确率和召回率的综合（2PR)/(P+R)
+from sklearn.metrics import accuracy_score, precision_score, recall_score,f1_score
+print('pr=',precision_score(y_test, y_pred, average='macro'))
+print('ac=',accuracy_score(y_test, y_pred))
+print('re=',recall_score(y_test, y_pred,average='macro'))
+print('f1=',f1_score(y_test, y_pred, average='macro'))
+
+
+from sklearn.ensemble import RandomForestClassifier
+
+rf=RandomForestClassifier()
+rf.fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+print('pr=',precision_score(y_test, y_pred, average='macro'))
+print('ac=',accuracy_score(y_test, y_pred))
+print('re=',recall_score(y_test, y_pred,average='macro'))
+print('f1=',f1_score(y_test, y_pred, average='macro'))
